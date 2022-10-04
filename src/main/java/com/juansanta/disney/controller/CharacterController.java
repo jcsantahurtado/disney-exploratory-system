@@ -1,6 +1,7 @@
 package com.juansanta.disney.controller;
 
 import com.juansanta.disney.dto.CharacterDto;
+import com.juansanta.disney.dto.CharacterSearchDto;
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.service.CharacterService;
@@ -33,6 +34,22 @@ public class CharacterController {
         if (!characterService.existsCharacterById(id))
             return new ResponseEntity(new Message("El personaje no existe"), HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(characterService.get(id));
+    }
+
+    @GetMapping(params = "name")
+    public ResponseEntity<List<CharacterSearchDto>> getAllCharactersByName(@RequestParam(required = false) final String name) {
+        return ResponseEntity.ok(characterService.findAllByName(name));
+    }
+
+    @GetMapping(params = "age")
+    public ResponseEntity<List<CharacterSearchDto>> getAllCharactersByAge(@RequestParam(required = false) final Integer age) {
+        System.out.println("age");
+        return ResponseEntity.ok(characterService.findAllByAge(age));
+    }
+
+    @GetMapping(params = "idMovie")
+    public ResponseEntity<List<CharacterSearchDto>> getAllCharactersByIdMovie(@RequestParam(required = false) final Long idMovie) {
+        return ResponseEntity.ok(characterService.findAllByIdMovie(idMovie));
     }
 
     // The type of request is indicated as well as the name of the service, ex: @PostMapping
