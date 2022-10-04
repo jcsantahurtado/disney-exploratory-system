@@ -28,6 +28,13 @@ public class CharacterController {
     @Autowired
     CharacterService characterService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Character> getCharacter(@PathVariable final Long id) {
+        if (!characterService.existsCharacterById(id))
+            return new ResponseEntity(new Message("El personaje no existe"), HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(characterService.get(id));
+    }
+
     // The type of request is indicated as well as the name of the service, ex: @PostMapping
     // With the ? we tell it that it does not return any type of data
     // The body will be a JSON
