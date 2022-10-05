@@ -34,6 +34,10 @@ public class MovieService {
     @Autowired
     GenreRepository genreRepository;
 
+    public Movie get(final Long id) {
+        return movieRepository.findById(id).get();
+    }
+
     public Optional<Movie> getMovieByTitle(final String title) {
         return movieRepository.findMovieByTitle(title);
     }

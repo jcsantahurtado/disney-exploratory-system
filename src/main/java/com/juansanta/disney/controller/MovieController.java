@@ -2,6 +2,8 @@ package com.juansanta.disney.controller;
 
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.dto.MovieDto;
+import com.juansanta.disney.entity.Character;
+import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.service.MovieService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,13 @@ public class MovieController {
     // Dependency injection
     @Autowired
     MovieService movieService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Movie> getMovie(@PathVariable final Long id) {
+        if (!movieService.existsMovieById(id))
+            return new ResponseEntity(new Message("La película con ese ID no existe"), HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(movieService.get(id));
+    }
 
     // The type of request is indicated as well as the name of the service, ex: @PostMapping
     // With the ? we tell it that it does not return any type of data
