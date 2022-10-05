@@ -29,6 +29,11 @@ public class CharacterController {
     @Autowired
     CharacterService characterService;
 
+    @GetMapping
+    public ResponseEntity<List<CharacterSearchDto>> getAllCharacters() {
+        return ResponseEntity.ok(characterService.findAll());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Character> getCharacter(@PathVariable final Long id) {
         if (!characterService.existsCharacterById(id))

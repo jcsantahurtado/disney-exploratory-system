@@ -2,11 +2,13 @@ package com.juansanta.disney.service;
 
 import com.juansanta.disney.dto.CharacterDto;
 import com.juansanta.disney.dto.CharacterSearchDto;
+import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.repository.CharacterRepository;
 import com.juansanta.disney.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +32,11 @@ public class CharacterService {
     MovieRepository movieRepository;
 
     // By default, the repository when extending JPA brings the default method
-    public List<Character> findAll() {
-        return characterRepository.findAll();
+    public List<CharacterSearchDto> findAll() {
+        return characterRepository.findAll(Sort.by("id"))
+                .stream()
+                .map(character -> mapToSearchDto(character, new CharacterSearchDto()))
+                .collect(Collectors.toList());
     }
 
     public Character get(final Long id) {
