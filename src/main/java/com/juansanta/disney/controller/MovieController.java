@@ -5,6 +5,7 @@ import com.juansanta.disney.dto.MovieDto;
 import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
+import com.juansanta.disney.service.CharacterService;
 import com.juansanta.disney.service.MovieService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,9 @@ public class MovieController {
     // Dependency injection
     @Autowired
     MovieService movieService;
+
+    @Autowired
+    CharacterService characterService;
 
     @GetMapping
     public ResponseEntity<List<MovieSearchDto>> getAllMovies() {
@@ -122,6 +126,36 @@ public class MovieController {
             return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);
         movieService.delete(id);
         return new ResponseEntity<>(new Message("Película eliminada"), HttpStatus.OK);
+    }
+
+    @PostMapping("/{idMovie}/characters/{idCharacter}")
+    public ResponseEntity<Message> addCharacter(@PathVariable final Long idMovie,
+                                             @PathVariable final Long idCharacter) {
+
+        if (!movieService.existsMovieById(idMovie))
+            return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);
+
+        if (!characterService.existsCharacterById(idCharacter))
+            return new ResponseEntity<>(new Message("No existe personaje con ese ID"), HttpStatus.NOT_FOUND);
+
+        movieService.addCharacterToMovie(idMovie, idCharacter);
+        return new ResponseEntity<>(new Message("El personaje fue agregado a la película"), HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/{idMovie}/characters/{idCharacter}")
+    public ResponseEntity<Message> deleteCharacter(@PathVariable final Long idMovie,
+                                                @PathVariable final Long idCharacter) {
+
+        if (!movieService.existsMovieById(idMovie))
+            return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);
+
+        if (!characterService.existsCharacterById(idCharacter))
+            return new ResponseEntity<>(new Message("No existe personaje con ese ID"), HttpStatus.NOT_FOUND);
+
+        movieService.deleteCharacterFromMovie(idMovie, idCharacter);
+        return new ResponseEntity<>(new Message("El personaje fue removido de la película"), HttpStatus.OK);
+
     }
 
 }

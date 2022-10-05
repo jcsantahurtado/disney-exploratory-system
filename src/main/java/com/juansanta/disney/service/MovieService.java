@@ -103,6 +103,32 @@ public class MovieService {
                 .collect(Collectors.toList());
     }
 
+    public void addCharacterToMovie(Long idMovie, Long idCharacter) {
+
+        Movie movie = movieRepository.getReferenceById(idMovie);
+        Character character = characterRepository.getReferenceById(idCharacter);
+
+        movie.addCharacter(character);
+        character.addMovie(movie);
+
+        movieRepository.save(movie);
+        characterRepository.save(character);
+
+    }
+
+    public void deleteCharacterFromMovie(Long idMovie, Long idCharacter) {
+
+        Movie movie = movieRepository.getReferenceById(idMovie);
+        Character character = characterRepository.getReferenceById(idCharacter);
+
+        movie.deleteCharacter(character);
+        character.deleteMovie(movie);
+
+        movieRepository.save(movie);
+        characterRepository.save(character);
+
+    }
+
     public boolean existsMovieById(Long id) {
         return movieRepository.existsById(id);
     }

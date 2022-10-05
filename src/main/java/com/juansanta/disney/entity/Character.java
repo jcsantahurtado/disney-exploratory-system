@@ -61,7 +61,13 @@ public class Character {
     }
 
     public void addMovie(Movie movie) {
-        this.movies.add(movie);
+        if (movies.contains(movie)) return;
+        movies.add(movie);
+    }
+
+    public void deleteMovie(Movie movie) {
+        if (!movies.contains(movie)) return;
+        movies.remove(movie);
     }
 
 }
