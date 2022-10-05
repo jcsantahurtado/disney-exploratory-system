@@ -1,6 +1,7 @@
 package com.juansanta.disney.service;
 
 import com.juansanta.disney.dto.MovieDto;
+import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Genre;
 import com.juansanta.disney.entity.Movie;
@@ -8,15 +9,14 @@ import com.juansanta.disney.repository.CharacterRepository;
 import com.juansanta.disney.repository.GenreRepository;
 import com.juansanta.disney.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // Notation to indicate that it is a Service
 @Service
@@ -59,6 +59,50 @@ public class MovieService {
         movieRepository.deleteById(id);
     }
 
+    public List<MovieSearchDto> findAllByName(String name) {
+        return movieRepository.findByTitleContainingIgnoreCase(name)
+                .stream()
+                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .collect(Collectors.toList());
+    }
+
+    public List<MovieSearchDto> findAllByIdGenre(Long idGenre) {
+        Genre genre = genreRepository.getReferenceById(idGenre);
+        return movieRepository.findAllByGenres(genre)
+                .stream()
+                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .collect(Collectors.toList());
+    }
+
+    public List<MovieSearchDto> findAllInOrder(String order) {
+
+        List<Movie> movies;
+
+        switch(order) {
+            case "ASC":
+                movies = movieRepository.findAll(Sort.by("id"));
+                break;
+            case "DESC":
+                movies = movieRepository.findAll(Sort.by("id").descending());
+                break;
+            default:
+                movies = new ArrayList<>();
+        }
+
+        return movies
+                .stream()
+                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<MovieSearchDto> findAll() {
+        return movieRepository.findAll(Sort.by("id"))
+                .stream()
+                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .collect(Collectors.toList());
+    }
+
     public boolean existsMovieById(Long id) {
         return movieRepository.existsById(id);
     }
@@ -97,6 +141,13 @@ public class MovieService {
 
         return movie;
 
+    }
+
+    private MovieSearchDto mapToSearchDTO(final Movie movie, final MovieSearchDto movieSearchDTO) {
+        movieSearchDTO.setImageUrl(movie.getImageUrl());
+        movieSearchDTO.setName(movie.getTitle());
+        movieSearchDTO.setCreationDate(movie.getCreationDate());
+        return movieSearchDTO;
     }
 
 }

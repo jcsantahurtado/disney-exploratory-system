@@ -2,6 +2,7 @@ package com.juansanta.disney.controller;
 
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.dto.MovieDto;
+import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.service.MovieService;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 // Notation to indicate that it is a controller of type Rest
 @RestController
@@ -29,11 +31,31 @@ public class MovieController {
     @Autowired
     MovieService movieService;
 
+    @GetMapping
+    public ResponseEntity<List<MovieSearchDto>> getAllMovies() {
+        return ResponseEntity.ok(movieService.findAll());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovie(@PathVariable final Long id) {
         if (!movieService.existsMovieById(id))
             return new ResponseEntity(new Message("La película con ese ID no existe"), HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(movieService.get(id));
+    }
+
+    @GetMapping(params = "name")
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByName(@RequestParam(required = false) final String name) {
+        return ResponseEntity.ok(movieService.findAllByName(name));
+    }
+
+    @GetMapping(params = "idGenre")
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByIdMovie(@RequestParam(required = false) final Long idGenre) {
+        return ResponseEntity.ok(movieService.findAllByIdGenre(idGenre));
+    }
+
+    @GetMapping(params = "order")
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesInOrder(@RequestParam(required = false) final String order) {
+        return ResponseEntity.ok(movieService.findAllInOrder(order));
     }
 
     // The type of request is indicated as well as the name of the service, ex: @PostMapping
