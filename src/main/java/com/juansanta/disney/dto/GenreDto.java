@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class GenreDTO {
+public class GenreDto {
 
     @Size(max = 205)
     private String imageUrl;

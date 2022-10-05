@@ -3,7 +3,6 @@ package com.juansanta.disney.controller;
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.dto.MovieDto;
 import com.juansanta.disney.dto.MovieSearchDto;
-import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.service.CharacterService;
 import com.juansanta.disney.service.MovieService;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 // Notation to indicate that it is a controller of type Rest
 @RestController
@@ -43,22 +43,26 @@ public class MovieController {
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovie(@PathVariable final Long id) {
         if (!movieService.existsMovieById(id))
-            return new ResponseEntity(new Message("La película con ese ID no existe"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new Message("La película con ese ID no existe"),
+                    HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(movieService.get(id));
     }
 
     @GetMapping(params = "name")
-    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByName(@RequestParam(required = false) final String name) {
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByName(@RequestParam(required = false)
+                                                                       final String name) {
         return ResponseEntity.ok(movieService.findAllByName(name));
     }
 
     @GetMapping(params = "idGenre")
-    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByIdMovie(@RequestParam(required = false) final Long idGenre) {
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesByIdMovie(@RequestParam(required = false)
+                                                                          final Long idGenre) {
         return ResponseEntity.ok(movieService.findAllByIdGenre(idGenre));
     }
 
     @GetMapping(params = "order")
-    public ResponseEntity<List<MovieSearchDto>> getAllMoviesInOrder(@RequestParam(required = false) final String order) {
+    public ResponseEntity<List<MovieSearchDto>> getAllMoviesInOrder(@RequestParam(required = false)
+                                                                        final String order) {
         return ResponseEntity.ok(movieService.findAllInOrder(order));
     }
 
@@ -72,48 +76,54 @@ public class MovieController {
     public ResponseEntity<?> createMovie(@Valid @RequestBody final MovieDto movieDto,
                                          BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            System.out.println("Error campos");
-        }
-
         if (StringUtils.isBlank(movieDto.getImageUrl()))
-            return new ResponseEntity<>(new Message("La URL de la imagen para la película es obligatoria"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("La URL de la imagen para la película es obligatoria"),
+                    HttpStatus.BAD_REQUEST);
 
         if (StringUtils.isBlank(movieDto.getTitle()))
-            return new ResponseEntity<>(new Message("El título es obligatorio"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("El título es obligatorio"),
+                    HttpStatus.BAD_REQUEST);
 
         if (movieDto.getCreationDate() == null)
-            return new ResponseEntity<>(new Message("La fecha de creación es requerida"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("La fecha de creación es requerida"),
+                    HttpStatus.BAD_REQUEST);
 
         if (movieDto.getRating() < 1 || movieDto.getRating() > 5)
-            return new ResponseEntity<>(new Message("La calificación debe ser del 1 al 5"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("La calificación debe ser del 1 al 5"),
+                    HttpStatus.BAD_REQUEST);
 
         if (movieService.existsMovieByTitle(movieDto.getTitle()))
-            return new ResponseEntity<>(new Message("Ya existe una película con ese título"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Ya existe una película con ese título"),
+                    HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(movieService.create(movieDto), HttpStatus.OK);
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCharacter(@PathVariable final Long id,
-                                             @RequestBody @Valid final MovieDto movieDto) {
+    public ResponseEntity<?> updateMovie(@PathVariable final Long id,
+                                         @RequestBody @Valid final MovieDto movieDto) {
 
         if (!movieService.existsMovieById(id))
-            return new ResponseEntity<>(new Message("No existe la película"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Message("No existe la película"),
+                    HttpStatus.NOT_FOUND);
 
         if (movieService.existsMovieByTitle(movieDto.getTitle())
-                && movieService.getMovieByTitle(movieDto.getTitle()).get().getId() != id)
-            return new ResponseEntity<>(new Message("El título de la película ya está registrado"), HttpStatus.NOT_FOUND);
+                && !Objects.equals(movieService.getMovieByTitle(movieDto.getTitle()).getId(), id))
+            return new ResponseEntity<>(new Message("El título de la película ya está registrado"),
+                    HttpStatus.NOT_FOUND);
 
         if (StringUtils.isBlank(movieDto.getTitle()))
-            return new ResponseEntity<>(new Message("El título de la película es obligatoria"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("El título de la película es obligatoria"),
+                    HttpStatus.BAD_REQUEST);
 
         if (movieDto.getCreationDate() == null)
-            return new ResponseEntity<>(new Message("La fecha de creación es requerida"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("La fecha de creación es requerida"),
+                    HttpStatus.BAD_REQUEST);
 
         if (movieDto.getRating() < 1 || movieDto.getRating() > 5)
-            return new ResponseEntity<>(new Message("La calificación debe ser del 1 al 5"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("La calificación debe ser del 1 al 5"),
+                    HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(movieService.update(id, movieDto), HttpStatus.OK);
 
@@ -121,7 +131,7 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<?> deleteCharacter(@PathVariable final Long id) {
+    public ResponseEntity<?> deleteMovie(@PathVariable final Long id) {
         if (!movieService.existsMovieById(id))
             return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);
         movieService.delete(id);
@@ -129,8 +139,8 @@ public class MovieController {
     }
 
     @PostMapping("/{idMovie}/characters/{idCharacter}")
-    public ResponseEntity<Message> addCharacter(@PathVariable final Long idMovie,
-                                             @PathVariable final Long idCharacter) {
+    public ResponseEntity<Message> addCharacterToMovie(@PathVariable final Long idMovie,
+                                                       @PathVariable final Long idCharacter) {
 
         if (!movieService.existsMovieById(idMovie))
             return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);
@@ -144,8 +154,8 @@ public class MovieController {
     }
 
     @DeleteMapping("/{idMovie}/characters/{idCharacter}")
-    public ResponseEntity<Message> deleteCharacter(@PathVariable final Long idMovie,
-                                                @PathVariable final Long idCharacter) {
+    public ResponseEntity<Message> deleteCharacterFromMovie(@PathVariable final Long idMovie,
+                                                            @PathVariable final Long idCharacter) {
 
         if (!movieService.existsMovieById(idMovie))
             return new ResponseEntity<>(new Message("No existe película con ese ID"), HttpStatus.NOT_FOUND);

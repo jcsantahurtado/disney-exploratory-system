@@ -12,8 +12,8 @@ public class MovieSearchDto {
     @Size(max = 205)
     private String imageUrl;
 
-    @Size(max = 25)
-    private String name;
+    @Size(max = 75)
+    private String title;
 
     private LocalDate creationDate;
 

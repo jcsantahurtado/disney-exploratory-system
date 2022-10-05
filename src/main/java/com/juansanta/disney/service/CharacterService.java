@@ -2,7 +2,6 @@ package com.juansanta.disney.service;
 
 import com.juansanta.disney.dto.CharacterDto;
 import com.juansanta.disney.dto.CharacterSearchDto;
-import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.repository.CharacterRepository;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 // Notation to indicate that it is a Service
@@ -43,8 +41,8 @@ public class CharacterService {
         return characterRepository.findById(id).get();
     }
 
-    public Optional<Character> getCharacterByName(final String name) {
-        return characterRepository.findCharacterByName(name);
+    public Character getCharacterByName(final String name) {
+        return characterRepository.getReferenceByName(name);
     }
 
     public Character create(final CharacterDto characterDto) {

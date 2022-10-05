@@ -1,6 +1,6 @@
 package com.juansanta.disney.controller;
 
-import com.juansanta.disney.dto.GenreDTO;
+import com.juansanta.disney.dto.GenreDto;
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.service.GenreService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +23,7 @@ public class GenreController {
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<?> createGenre(@RequestBody @Valid final GenreDTO genreDTO) {
+    public ResponseEntity<?> createGenre(@RequestBody @Valid final GenreDto genreDTO) {
 
         if (StringUtils.isBlank(genreDTO.getImageUrl()))
             return new ResponseEntity<>(new Message("La URL de la imagen es obligatoria"), HttpStatus.BAD_REQUEST);

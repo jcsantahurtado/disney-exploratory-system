@@ -38,8 +38,8 @@ public class MovieService {
         return movieRepository.findById(id).get();
     }
 
-    public Optional<Movie> getMovieByTitle(final String title) {
-        return movieRepository.findMovieByTitle(title);
+    public Movie getMovieByTitle(final String title) {
+        return movieRepository.getReferenceByTitle(title);
     }
 
     public Movie create(final MovieDto movieDto) {
@@ -171,7 +171,7 @@ public class MovieService {
 
     private MovieSearchDto mapToSearchDTO(final Movie movie, final MovieSearchDto movieSearchDTO) {
         movieSearchDTO.setImageUrl(movie.getImageUrl());
-        movieSearchDTO.setName(movie.getTitle());
+        movieSearchDTO.setTitle(movie.getTitle());
         movieSearchDTO.setCreationDate(movie.getCreationDate());
         return movieSearchDTO;
     }
