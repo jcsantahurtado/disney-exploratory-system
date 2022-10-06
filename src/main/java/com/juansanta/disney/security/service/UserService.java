@@ -1,12 +1,15 @@
 package com.juansanta.disney.security.service;
 
+import com.juansanta.disney.dto.EmailToSend;
 import com.juansanta.disney.dto.Message;
 import com.juansanta.disney.security.dto.NewUser;
 import com.juansanta.disney.security.entity.Role;
 import com.juansanta.disney.security.entity.User;
 import com.juansanta.disney.security.enums.RoleName;
 import com.juansanta.disney.security.repository.UserRepository;
+import com.juansanta.disney.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,9 @@ import java.util.*;
 @Transactional
 public class UserService {
 
+    @Value("${email.EXISTS_SENDGRID_API_KEY}")
+    private boolean existsSendgridApiKey;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -26,6 +32,9 @@ public class UserService {
 
     @Autowired
     RoleService roleService;
+
+    @Autowired
+    MailService mailService;
 
     public Optional<User> getByUsername(String username){
         return userRepository.findByUsername(username);
@@ -44,9 +53,22 @@ public class UserService {
         final User user = new User();
         mapToEntity(userDTO, user);
 
+        EmailToSend emailToSend = EmailToSend.builder()
+                .from("hola@disney.com.co")  // email configured in SendGrid
+                .subject("Saludo de bienvenida")
+                .to(user.getEmail())
+                .content("¡Hola, Bienvenid@ a Disney APP!")
+                .build();
+
+        if (existsSendgridApiKey) {
+            userRepository.save(user);
+            mailService.sendTextEmail(emailToSend);
+            return new Message("Se ha registrado con exito!");
+        }
+
         userRepository.save(user);
 
-        return new Message("Se ha registrado con exito!");
+        return emailToSend;
 
     }
 

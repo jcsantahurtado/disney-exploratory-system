@@ -64,6 +64,13 @@
 			<version>0.9.1</version>
 		</dependency>
 
+		<!-- dependency required for sending emails -->
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
