@@ -89,6 +89,13 @@
 			<version>4.0.1</version>
 		</dependency>
 
+		<!-- to generate unit tests -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
