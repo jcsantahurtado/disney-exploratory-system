@@ -70,7 +70,7 @@ Se recomienda abrir con un visor adecuado para archivos JSON.
 _Algunas de las herramientas que utilizadas para crear el proyecto_
 
 * [Bootify](https://bootify.io/) - Es un servicio freemium que acelera el desarrollo de Spring Boot
-* [SpringBoot](https://docs.spring.io/spring-boot/docs/2.4.12/reference/html/documentation-overview.html) - El framework web usado
+* [Spring](https://docs.spring.io/spring-boot/docs/2.4.12/reference/html/documentation-overview.html) - El framework usado
 * [Maven](https://maven.apache.org/) - Manejador de dependencias
 * [H2 In-Memory Database](https://mvnrepository.com/artifact/com.h2database/h2) - Base de Datos
 * [Spring Security](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security) - Framework de apoyo de Spring que provee una serie de servicios de seguridad
