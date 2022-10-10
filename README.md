@@ -48,7 +48,7 @@ _Creación de usuario._
 _Login exitoso de admin._  
 <img width="700" src="https://user-images.githubusercontent.com/60399697/194791716-75911a70-6e7d-42e1-880d-ddbc28c5b16d.png">
 
-El rol Admin por defecto tiene también el rol User, nos devuelve un token que es el que utilizamos para todas las peticiones.
+El rol Admin por defecto tiene también el rol User, nos devuelve un token que es el que utilizamos para todas las peticiones.  
 <img width="700" src="https://user-images.githubusercontent.com/60399697/194792591-937ae42a-bd62-44b6-b356-e1a23cbfc455.png">
 
 
