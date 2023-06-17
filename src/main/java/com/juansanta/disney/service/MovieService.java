@@ -5,6 +5,7 @@ import com.juansanta.disney.dto.MovieSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Genre;
 import com.juansanta.disney.entity.Movie;
+import com.juansanta.disney.mapper.MovieMapper;
 import com.juansanta.disney.repository.CharacterRepository;
 import com.juansanta.disney.repository.GenreRepository;
 import com.juansanta.disney.repository.MovieRepository;
@@ -62,7 +63,7 @@ public class MovieService {
     public List<MovieSearchDto> findAllByName(String name) {
         return movieRepository.findByTitleContainingIgnoreCase(name)
                 .stream()
-                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .map(movie -> MovieMapper.mapToSearchDTO(movie, new MovieSearchDto()))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +71,7 @@ public class MovieService {
         Genre genre = genreRepository.getReferenceById(idGenre);
         return movieRepository.findAllByGenres(genre)
                 .stream()
-                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .map(movie -> MovieMapper.mapToSearchDTO(movie, new MovieSearchDto()))
                 .collect(Collectors.toList());
     }
 
@@ -91,7 +92,7 @@ public class MovieService {
 
         return movies
                 .stream()
-                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .map(movie -> MovieMapper.mapToSearchDTO(movie, new MovieSearchDto()))
                 .collect(Collectors.toList());
 
     }
@@ -99,7 +100,7 @@ public class MovieService {
     public List<MovieSearchDto> findAll() {
         return movieRepository.findAll(Sort.by("id"))
                 .stream()
-                .map(movie -> mapToSearchDTO(movie, new MovieSearchDto()))
+                .map(movie -> MovieMapper.mapToSearchDTO(movie, new MovieSearchDto()))
                 .collect(Collectors.toList());
     }
 
@@ -167,13 +168,6 @@ public class MovieService {
 
         return movie;
 
-    }
-
-    private MovieSearchDto mapToSearchDTO(final Movie movie, final MovieSearchDto movieSearchDTO) {
-        movieSearchDTO.setImageUrl(movie.getImageUrl());
-        movieSearchDTO.setTitle(movie.getTitle());
-        movieSearchDTO.setCreationDate(movie.getCreationDate());
-        return movieSearchDTO;
     }
 
 }

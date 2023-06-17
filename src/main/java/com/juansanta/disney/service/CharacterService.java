@@ -4,6 +4,7 @@ import com.juansanta.disney.dto.CharacterDto;
 import com.juansanta.disney.dto.CharacterSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
+import com.juansanta.disney.mapper.CharacterMapper;
 import com.juansanta.disney.repository.CharacterRepository;
 import com.juansanta.disney.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class CharacterService {
     public List<CharacterSearchDto> findAll() {
         return characterRepository.findAll(Sort.by("id"))
                 .stream()
-                .map(character -> mapToSearchDto(character, new CharacterSearchDto()))
+                .map(character -> CharacterMapper.mapToSearchDto(character))
                 .collect(Collectors.toList());
     }
 
@@ -45,16 +46,24 @@ public class CharacterService {
         return characterRepository.getReferenceByName(name);
     }
 
-    public Character create(final CharacterDto characterDto) {
-        final Character character = new Character();
-        mapToEntity(characterDto, character);
-        return characterRepository.save(character);
+    public CharacterDto create(CharacterDto characterDto) {
+
+        // Convert CharacterDto into Character JPA Entity
+        Character character = CharacterMapper.mapToEntity(characterDto);
+
+        // Convert Character JPA entity to CharacterDto
+        Character savedCharacter = characterRepository.save(character);
+
+        // Convert User JPA entity to UserDto
+        CharacterDto savedCharacterDto = CharacterMapper.mapToDto(savedCharacter);
+
+        return savedCharacterDto;
     }
 
     public Character update(final Long id, final CharacterDto characterDto) {
         final Character character = characterRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        mapToEntity(characterDto, character);
+        CharacterMapper.mapToEntity(characterDto);
         return characterRepository.save(character);
     }
 
@@ -65,14 +74,14 @@ public class CharacterService {
     public List<CharacterSearchDto> findAllByName(final String name) {
         return characterRepository.findByNameContainingIgnoreCase(name)
                 .stream()
-                .map(character -> mapToSearchDto(character, new CharacterSearchDto()))
+                .map(character -> CharacterMapper.mapToSearchDto(character))
                 .collect(Collectors.toList());
     }
 
     public List<CharacterSearchDto> findAllByAge(final Integer age) {
         return characterRepository.findAllByAge(age)
                 .stream()
-                .map(character -> mapToSearchDto(character, new CharacterSearchDto()))
+                .map(character -> CharacterMapper.mapToSearchDto(character))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +89,7 @@ public class CharacterService {
         Movie movie = movieRepository.getReferenceById(idMovie);
         return characterRepository.findAllByMovies(movie)
                 .stream()
-                .map(character -> mapToSearchDto(character, new CharacterSearchDto()))
+                .map(character -> CharacterMapper.mapToSearchDto(character))
                 .collect(Collectors.toList());
     }
 
@@ -90,21 +99,6 @@ public class CharacterService {
 
     public boolean existsCharacterByName(String name) {
         return characterRepository.existsCharacterByName(name);
-    }
-
-    private Character mapToEntity(final CharacterDto characterDTO, final Character character) {
-        character.setImageUrl(characterDTO.getImageUrl());
-        character.setName(characterDTO.getName());
-        character.setAge(characterDTO.getAge());
-        character.setWeight(characterDTO.getWeight());
-        character.setStory(characterDTO.getStory());
-        return character;
-    }
-
-    private CharacterSearchDto mapToSearchDto(final Character character, final CharacterSearchDto characterSearchDto) {
-        characterSearchDto.setImageUrl(character.getImageUrl());
-        characterSearchDto.setName(character.getName());
-        return characterSearchDto;
     }
 
 }

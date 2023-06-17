@@ -1,5 +1,6 @@
 package com.juansanta.disney.data;
 
+import com.juansanta.disney.dto.CharacterDto;
 import com.juansanta.disney.dto.CharacterSearchDto;
 import com.juansanta.disney.entity.Character;
 
@@ -24,6 +25,19 @@ public class FactoryCharacterTestData {
         character.setLastUpdated(OffsetDateTime.now());
 
         return character;
+
+    }
+
+    public static CharacterDto getCharacterDto() {
+
+        CharacterDto characterDto = new CharacterDto();
+        characterDto.setImageUrl("https://bootify.io/");
+        characterDto.setName("James P. Sulley Sullivan");
+        characterDto.setAge(18);
+        characterDto.setWeight(347.45);
+        characterDto.setStory("He was a renowned scarer at Monsters, Inc.");
+
+        return characterDto;
 
     }
 

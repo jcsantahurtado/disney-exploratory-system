@@ -166,7 +166,7 @@ class CharacterControllerTest {
     @Test
     void mustCreateACharacter() throws Exception {
         //Given
-        var expectedResponse = FactoryCharacterTestData.getCharacter();
+        var expectedResponse = FactoryCharacterTestData.getCharacterDto();
 
         //When
         when(service.create(any(CharacterDto.class))).thenReturn(expectedResponse);

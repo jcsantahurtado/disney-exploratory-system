@@ -6,15 +6,18 @@ import java.util.Set;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Character {
 
     @Id
@@ -58,6 +61,14 @@ public class Character {
     @PreUpdate
     public void preUpdate() {
         lastUpdated = OffsetDateTime.now();
+    }
+
+    public Character(String imageUrl, String name, Integer age, Double weight, String story) {
+        this.imageUrl = imageUrl;
+        this.name = name;
+        this.age = age;
+        this.weight = weight;
+        this.story = story;
     }
 
     public void addMovie(Movie movie) {
