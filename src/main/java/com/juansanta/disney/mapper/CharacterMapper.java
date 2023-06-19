@@ -9,6 +9,7 @@ public class CharacterMapper {
     // Convert Character JPA Entity into CharacterDto
     public static CharacterDto mapToDto(Character character){
         CharacterDto characterDto = new CharacterDto(
+                character.getId(),
                 character.getImageUrl(),
                 character.getName(),
                 character.getAge(),

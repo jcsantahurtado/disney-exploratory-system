@@ -10,6 +10,8 @@ import java.util.List;
 @Getter @Setter
 public class MovieDto {
 
+    private Long id;
+
     @Size(max = 205)
     private String imageUrl;
 
@@ -24,4 +26,6 @@ public class MovieDto {
 
     private List<Long> movieGenres;
 
+    public MovieDto(Long id, String imageUrl, String title, LocalDate creationDate, Integer rating) {
+    }
 }

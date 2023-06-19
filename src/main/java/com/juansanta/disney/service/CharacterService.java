@@ -5,6 +5,7 @@ import com.juansanta.disney.dto.CharacterSearchDto;
 import com.juansanta.disney.entity.Character;
 import com.juansanta.disney.entity.Movie;
 import com.juansanta.disney.mapper.CharacterMapper;
+import com.juansanta.disney.mapper.MovieMapper;
 import com.juansanta.disney.repository.CharacterRepository;
 import com.juansanta.disney.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,18 @@ public class CharacterService {
                 .collect(Collectors.toList());
     }
 
-    public Character get(final Long id) {
-        return characterRepository.findById(id).get();
+    public CharacterDto get(final Long id) {
+        Character foundCharacter = characterRepository.findById(id).get();
+
+        // Convert Character JPA entity to CharacterDto
+        CharacterDto foundCharacterDto = CharacterMapper.mapToDto(foundCharacter);
+
+        return foundCharacterDto;
     }
 
-    public Character getCharacterByName(final String name) {
-        return characterRepository.getReferenceByName(name);
+    public CharacterDto getCharacterByName(final String name) {
+        Character referenceByName = characterRepository.getReferenceByName(name);
+        return CharacterMapper.mapToDto(referenceByName);
     }
 
     public CharacterDto create(CharacterDto characterDto) {
@@ -60,11 +67,20 @@ public class CharacterService {
         return savedCharacterDto;
     }
 
-    public Character update(final Long id, final CharacterDto characterDto) {
-        final Character character = characterRepository.findById(id)
+    public CharacterDto update(final Long id, final CharacterDto characterDto) {
+
+        final Character existingCharacter = characterRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        CharacterMapper.mapToEntity(characterDto);
-        return characterRepository.save(character);
+
+        existingCharacter.setImageUrl(characterDto.getImageUrl());
+        existingCharacter.setName(characterDto.getName());
+        existingCharacter.setAge(characterDto.getAge());
+        existingCharacter.setWeight(characterDto.getWeight());
+        existingCharacter.setStory(characterDto.getStory());
+
+        Character updatedUser = characterRepository.save(existingCharacter);
+
+        return CharacterMapper.mapToDto(updatedUser);
     }
 
     public void delete(Long id) {

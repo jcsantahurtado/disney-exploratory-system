@@ -45,15 +45,29 @@ public class MovieService {
 
     public Movie create(final MovieDto movieDto) {
         final Movie movie = new Movie();
-        mapToEntity(movieDto, movie);
+
+        final List<Character> movieCharacters = characterRepository.findAllById(
+                movieDto.getMovieCharacters() == null ? Collections.emptyList() : movieDto.getMovieCharacters());
+
+        final List<Genre> movieGenres = genreRepository.findAllById(
+                movieDto.getMovieGenres() == null ? Collections.emptyList() : movieDto.getMovieGenres());
+
+        MovieMapper.mapToEntity(movieDto, movie);
         return movieRepository.save(movie);
     }
 
-    public Movie update(final Long id, final MovieDto movieDto) {
-        final Movie movie = movieRepository.findById(id)
+    public MovieDto update(final Long id, final MovieDto movie) {
+        final Movie existingMovie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        mapToEntity(movieDto, movie);
-        return movieRepository.save(movie);
+
+        existingMovie.setImageUrl(movie.getImageUrl());
+        existingMovie.setTitle(movie.getTitle());
+        existingMovie.setCreationDate(movie.getCreationDate());
+        existingMovie.setRating(movie.getRating());
+
+        Movie updatedMovie = movieRepository.save(existingMovie);
+
+        return MovieMapper.mapToDto(updatedMovie);
     }
 
     public void delete(Long id) {
@@ -136,38 +150,6 @@ public class MovieService {
 
     public boolean existsMovieByTitle(String title) {
         return movieRepository.existsMovieByTitle(title);
-    }
-
-    private Movie mapToEntity(final MovieDto movieDto, final Movie movie) {
-
-        movie.setImageUrl(movieDto.getImageUrl());
-        movie.setTitle(movieDto.getTitle());
-        movie.setCreationDate(movieDto.getCreationDate());
-        movie.setRating(movieDto.getRating());
-
-        final List<Character> movieCharacters = characterRepository.findAllById(
-                movieDto.getMovieCharacters() == null ? Collections.emptyList() : movieDto.getMovieCharacters());
-
-        if (movieCharacters.size() != (movieDto.getMovieCharacters() == null ? 0 : movieDto.getMovieCharacters().size())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of movieCharacters not found");
-        }
-        if (movie.getCharacters() == null) {
-            movie.setCharacters(new HashSet<>(movieCharacters));
-            // movie.setCharacters(movieCharacters.stream().collect(Collectors.toSet()));
-        }
-
-        final List<Genre> movieGenres = genreRepository.findAllById(
-                movieDto.getMovieGenres() == null ? Collections.emptyList() : movieDto.getMovieGenres());
-        if (movieGenres.size() != (movieDto.getMovieGenres() == null ? 0 : movieDto.getMovieGenres().size())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of movieGenres not found");
-        }
-        if (movie.getGenres() == null) {
-            movie.setGenres(new HashSet<>(movieGenres));
-            //movie.setMovieGenreGenres(movieGenres.stream().collect(Collectors.toSet()));
-        }
-
-        return movie;
-
     }
 
 }

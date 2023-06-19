@@ -37,7 +37,7 @@ public class CharacterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Character> getCharacter(@PathVariable final Long id) {
+    public ResponseEntity<CharacterDto> getCharacter(@PathVariable final Long id) {
         if (!characterService.existsCharacterById(id))
             return new ResponseEntity(new Message("El personaje no existe"), HttpStatus.NOT_FOUND);
         //return ResponseEntity.ok(characterService.get(id));

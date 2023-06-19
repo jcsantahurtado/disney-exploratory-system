@@ -47,7 +47,7 @@ class CharacterControllerTest {
     void shouldReturnACharacterAsJSONMessage() throws Exception {
 
         //Given
-        Character expectedCharacter = FactoryCharacterTestData.getCharacter();
+        CharacterDto expectedCharacter = FactoryCharacterTestData.getCharacterDto();
 
         //When
         when(service.existsCharacterById(anyLong())).thenReturn(true);
